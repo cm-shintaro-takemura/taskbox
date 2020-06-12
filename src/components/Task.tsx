@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, View, Text } from 'react-native'
+import { StyleSheet, View, Text, TouchableOpacity } from 'react-native'
 
 const styles = StyleSheet.create({
   container: {
@@ -8,10 +8,29 @@ const styles = StyleSheet.create({
     borderColor: 'black',
     justifyContent: 'center',
   },
+  rowContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  checkAndTitle: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'flex-start',
+  },
+  checkbox: {
+    marginLeft: 24,
+    fontSize: 24,
+    fontWeight: 'bold',
+  },
   title: {
-    marginLeft: 30,
+    marginLeft: 24,
     fontSize: 16,
     fontWeight: 'bold',
+  },
+  star: {
+    marginRight: 24,
+    fontSize: 18,
   },
 })
 
@@ -19,21 +38,38 @@ export type TaskProps = {
   task: {
     id: string
     title: string
-    state: string
-    updatedAt?: Date
+    state: 'TASK_INBOX' | 'TASK_ARCHIVED' | 'TASK_PINNED'
   }
-  onArchiveTask?: () => void
-  onPinTask?: () => void
+  onArchiveTask: (id: string) => void
+  onPinTask: (id: string) => void
 }
 
 function Task(props: TaskProps) {
   const {
-    task: { title },
+    task: { id, title, state },
+    onArchiveTask,
+    onPinTask,
   } = props
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{title}</Text>
+      <View style={styles.rowContainer}>
+        <View style={styles.checkAndTitle}>
+          <TouchableOpacity onPress={() => onArchiveTask(id)}>
+            <Text style={styles.checkbox}>
+              {state === 'TASK_ARCHIVED' ? '☑︎' : '□'}
+            </Text>
+          </TouchableOpacity>
+          <Text style={styles.title}>{title}</Text>
+        </View>
+        {state !== 'TASK_ARCHIVED' && (
+          <TouchableOpacity onPress={() => onPinTask(id)}>
+            <Text style={styles.star}>
+              {state === 'TASK_PINNED' ? '★' : '☆'}
+            </Text>
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
   )
 }
